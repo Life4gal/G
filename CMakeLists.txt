@@ -1,20 +1,20 @@
 ﻿cmake_minimum_required(VERSION 3.20)
 
-set(PROJECT_NAME_PREFIX "CMakeTemplateProject_")
+set(PROJECT_NAME_PREFIX "G_")
 
 set(
 		${PROJECT_NAME_PREFIX}MAJOR_VERSION
-		1
+		0
 )
 
 set(
 		${PROJECT_NAME_PREFIX}MINOR_VERSION
-		2
+		0
 )
 
 set(
 		${PROJECT_NAME_PREFIX}PATCH_VERSION
-		0
+		1
 )
 
 set(${PROJECT_NAME_PREFIX}VERSION ${${PROJECT_NAME_PREFIX}MAJOR_VERSION}.${${PROJECT_NAME_PREFIX}MINOR_VERSION}.${${PROJECT_NAME_PREFIX}PATCH_VERSION})
@@ -43,10 +43,10 @@ if (${PROJECT_NAME_PREFIX}MASTER_PROJECT AND NOT CMAKE_BUILD_TYPE)
 endif ()
 
 project(
-		CMakeTemplateProject
+		G
 		VERSION ${${PROJECT_NAME_PREFIX}VERSION}
-		DESCRIPTION "CMake Template Project"
-		HOMEPAGE_URL "https://github.com/Life4gal/CMakeTemplateProject"
+		DESCRIPTION "GAL GUI"
+		HOMEPAGE_URL "https://github.com/Life4gal/G"
 		LANGUAGES CXX
 )
 if (${${PROJECT_NAME_PREFIX}MASTER_PROJECT})
@@ -294,13 +294,13 @@ target_include_directories(
 
 # LINK 3rd-PARTY LIBRARIES
 set(${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES "")
-include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/fmtlib/fmt.cmake)
-include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/spdlog/spdlog.cmake)
-include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/openssl/openssl.cmake)
-include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/curl/curl.cmake)
-include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/stb/image.cmake)
-include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/freetype/freetype.cmake)
-include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/fontconfig/fontconfig.cmake)
+#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/fmtlib/fmt.cmake)
+#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/spdlog/spdlog.cmake)
+#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/openssl/openssl.cmake)
+#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/curl/curl.cmake)
+#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/stb/image.cmake)
+#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/freetype/freetype.cmake)
+#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/fontconfig/fontconfig.cmake)
 
 message(STATUS "=======================================")
 message(STATUS "[${PROJECT_NAME}] DEPENDENCIES:")
@@ -321,113 +321,6 @@ set_target_properties(
 
 # INSTALL TARGETS
 if (${PROJECT_NAME_PREFIX}INSTALL)
-#	include(CMakePackageConfigHelpers)
-#	doc_var(
-#			${PROJECT_NAME_PREFIX}CMAKE_DIR
-#			${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-#			STRING
-#			"Installation directory for cmake files, a relative path that "
-#			"will be joined with ${CMAKE_INSTALL_PREFIX} or an absolute "
-#			"path."
-#	)
-#
-#	set(version_config ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake)
-#	set(project_config ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake)
-#	set(pkgconfig ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.pc)
-#	set(targets_export_name ${PROJECT_NAME}-targets)
-#
-#	doc_var(
-#			${PROJECT_NAME_PREFIX}LIB_DIR
-#			${CMAKE_INSTALL_LIBDIR}
-#			STRING
-#			"Installation directory for libraries, a relative path that "
-#			"will be joined to ${CMAKE_INSTALL_PREFIX} or an absolute path."
-#	)
-#
-#	doc_var(
-#			${PROJECT_NAME_PREFIX}PKGCONFIG_DIR
-#			${CMAKE_INSTALL_LIBDIR}/pkgconfig
-#			PATH
-#			"Installation directory for pkgconfig (.pc) files, a relative "
-#			"path that will be joined with ${CMAKE_INSTALL_PREFIX} or an "
-#			"absolute path."
-#	)
-#
-#	# Generate the version, config and target files into the build directory.
-#	write_basic_package_version_file(
-#			${version_config}
-#			VERSION ${${PROJECT_NAME_PREFIX}VERSION}
-#			COMPATIBILITY AnyNewerVersion
-#	)
-#
-#	# Set ${PROJECT_NAME_PREFIX}LIB_NAME for pkg-config ${PROJECT_NAME}.pc.
-#	# We cannot use the OUTPUT_NAME target
-#	# property because it's not set by default.
-#	set(${PROJECT_NAME_PREFIX}LIB_NAME ${PROJECT_NAME})
-#	if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-#		set(${PROJECT_NAME_PREFIX}LIB_NAME "${${PROJECT_NAME_PREFIX}LIB_NAME}${${PROJECT_NAME_PREFIX}DEBUG_POSTFIX}")
-#	endif ()
-#
-#	# `exec_prefix` and `preifx` defined in `${PROJECT_NAME}-config.pc.in`
-#	set(library_path_for_pc_file "\${exec_prefix}/${${PROJECT_NAME_PREFIX}LIB_DIR}")
-#	set(include_path_for_pc_file "\${prefix}/${${PROJECT_NAME_PREFIX}INSTALL_HEADERS}")
-#
-#	if (EXISTS "${CMAKE_SOURCE_DIR}/cmake_modules/${PROJECT_NAME}.pc.in")
-#		configure_file(
-#				"${CMAKE_SOURCE_DIR}/cmake_modules/${PROJECT_NAME}.pc.in"
-#				"${pkgconfig}"
-#				@ONLY)
-#	else ()
-#		message(FATAL_ERROR "Can't find the configuration file ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.pc.in!")
-#	endif ()
-#
-#	if (EXISTS "${CMAKE_SOURCE_DIR}/cmake_modules/${PROJECT_NAME}-config.cmake.in")
-#		configure_package_config_file(
-#				${CMAKE_SOURCE_DIR}/cmake_modules/${PROJECT_NAME}-config.cmake.in
-#				${project_config}
-#				INSTALL_DESTINATION ${${PROJECT_NAME_PREFIX}CMAKE_DIR})
-#	else ()
-#		message(FATAL_ERROR "Can't find the configuration file ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}-config.cmake.in!")
-#	endif (EXISTS "${CMAKE_SOURCE_DIR}/cmake_modules/${PROJECT_NAME}-config.cmake.in")
-#
-#	set(INSTALL_TARGETS ${PROJECT_NAME})
-#
-#	# Install the library and headers.
-#	install(
-#			TARGETS ${INSTALL_TARGETS}
-#			EXPORT ${targets_export_name}
-#			LIBRARY DESTINATION ${${PROJECT_NAME_PREFIX}LIB_DIR}
-#			ARCHIVE DESTINATION ${${PROJECT_NAME_PREFIX}LIB_DIR}
-#			PUBLIC_HEADER DESTINATION "${${PROJECT_NAME_PREFIX}INSTALL_HEADERS}/${PROJECT_NAME}"
-#			FRAMEWORK DESTINATION "."
-#			RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-#
-#	# Use a namespace because CMake provides better diagnostics for namespaced
-#	# imported targets.
-#	export(
-#			TARGETS ${INSTALL_TARGETS}
-#			NAMESPACE ${PROJECT_NAME}::
-#			FILE ${PROJECT_BINARY_DIR}/${targets_export_name}.cmake)
-#
-#	# Install version, config and target files.
-#	install(
-#			FILES ${project_config} ${version_config}
-#			DESTINATION ${${PROJECT_NAME_PREFIX}CMAKE_DIR}
-#	)
-#	install(
-#			EXPORT ${targets_export_name}
-#			DESTINATION ${${PROJECT_NAME_PREFIX}CMAKE_DIR}
-#			NAMESPACE ${PROJECT_NAME}::
-#	)
-#	#install(
-#	#		FILES $<TARGET_PDB_FILE:${INSTALL_TARGETS}>
-#	#		DESTINATION ${${PROJECT_NAME_PREFIX}LIB_DIR} OPTIONAL
-#	#)
-#	install(
-#			FILES "${pkgconfig}"
-#			DESTINATION "${${PROJECT_NAME_PREFIX}PKGCONFIG_DIR}"
-#	)
-
 	# PackageProject.cmake will be used to make our target installable
 	CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.10.0")
 
@@ -475,6 +368,6 @@ endif (${PROJECT_NAME_PREFIX}DOC)
 # TESTS
 if (${PROJECT_NAME_PREFIX}TEST)
 	enable_testing()
-	add_subdirectory(standalone_test)
-	add_subdirectory(unit_test)
+#	add_subdirectory(standalone_test)
+#	add_subdirectory(unit_test)
 endif (${PROJECT_NAME_PREFIX}TEST)
