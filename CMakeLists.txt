@@ -68,18 +68,18 @@ include(${PROJECT_SOURCE_DIR}/cmake_utils/cpm_install.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake_utils/nuget_install.cmake)
 set(${PROJECT_NAME_PREFIX}3RD_PARTY_PATH ${PROJECT_SOURCE_DIR}/3rd-party)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	set(${PROJECT_NAME_PREFIX}PLATFORM_WINDOWS ON)
 	set(${PROJECT_NAME_PREFIX}PLATFORM ${PROJECT_NAME_PREFIX}PLATFORM_WINDOWS)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	set(${PROJECT_NAME_PREFIX}PLATFORM_LINUX ON)
 	set(${PROJECT_NAME_PREFIX}PLATFORM ${PROJECT_NAME_PREFIX}PLATFORM_LINUX)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set(${PROJECT_NAME_PREFIX}PLATFORM_MACOS ON)
 	set(${PROJECT_NAME_PREFIX}PLATFORM ${PROJECT_NAME_PREFIX}PLATFORM_MACOS)
-else()
+else ()
 	message(FATAL_ERROR "Unsupported Platform: ${CMAKE_SYSTEM_NAME}")
-endif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 doc_var(
 		${PROJECT_NAME_PREFIX}INSTALL_HEADERS
@@ -186,33 +186,29 @@ else ()
 endif (${PROJECT_NAME_PREFIX}SYSTEM_HEADERS)
 
 # HEADER FILES
-#file(
-#		GLOB_RECURSE
-#		${PROJECT_NAME_PREFIX}HEADER
-#		CONFIGURE_DEPENDS
-#
-#		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/*.hpp
-#)
 set(
 		${PROJECT_NAME_PREFIX}HEADER
 
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/hello.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/easy_network.hpp
+		# UTILITY
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/macro.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/exception.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/breakpoint.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/assert.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/type_traits.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/compare.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/cast.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/memory.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/endian.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/detail/constexpr_string_base.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/fixed_string.hpp
+		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/template_string.hpp
 )
 
 # SOURCE FILES
-#file(
-#		GLOB_RECURSE
-#		${PROJECT_NAME_PREFIX}SOURCE
-#		CONFIGURE_DEPENDS
-#
-#		${PROJECT_SOURCE_DIR}/src/*.cpp
-#)
 set(
 		${PROJECT_NAME_PREFIX}SOURCE
 
-		${PROJECT_SOURCE_DIR}/src/hello.cpp
-		${PROJECT_SOURCE_DIR}/src/easy_network.cpp
+		${PROJECT_SOURCE_DIR}/src/dummy.cpp
 )
 
 # LIBRARY
@@ -235,12 +231,19 @@ target_compile_options(
 		${PROJECT_NAME}
 		PRIVATE
 		${${PROJECT_NAME_PREFIX}COMPILE_FLAGS}
+
+		PUBLIC
+		# __VA_OPT__
+		$<$<CXX_COMPILER_ID:MSVC>:-Zc:preprocessor>
 )
 
 # SET DEFINITIONS
 target_compile_definitions(
 		${PROJECT_NAME}
 		PUBLIC
+
+		# clang-format off
+		# @formatter:off
 
 		${PROJECT_NAME_PREFIX}MAJOR_VERSION=${${PROJECT_NAME_PREFIX}MAJOR_VERSION}
 		${PROJECT_NAME_PREFIX}MINOR_VERSION=${${PROJECT_NAME_PREFIX}MINOR_VERSION}
@@ -260,6 +263,9 @@ target_compile_definitions(
 		$<$<AND:$<CXX_COMPILER_ID:Clang>,$<NOT:$<STREQUAL:"${CMAKE_CXX_SIMULATE_ID}","MSVC">>>:${PROJECT_NAME_PREFIX}COMPILER_CLANG>
 		# apple clang
 		$<$<CXX_COMPILER_ID:AppleClang>:${PROJECT_NAME_PREFIX}COMPILER_APPLE_CLANG>
+
+		# @formatter:on
+		# clang-format on
 )
 # build .dll/.so
 if (BUILD_SHARED_LIBS)
@@ -274,7 +280,7 @@ endif ()
 target_compile_features(
 		${PROJECT_NAME}
 		PUBLIC
-		cxx_std_20
+		cxx_std_23
 )
 
 # SET INCLUDE DIRECTORY
@@ -304,9 +310,9 @@ set(${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES "")
 
 message(STATUS "=======================================")
 message(STATUS "[${PROJECT_NAME}] DEPENDENCIES:")
-foreach(DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
+foreach (DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
 	message(STATUS "-->\t\t ${DEPENDENCY}")
-endforeach(DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
+endforeach (DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
 message(STATUS "=======================================")
 
 # SET DEBUG POSTFIX ==> lib${PROJECT_NAME} -> Release lib${PROJECT}d -> Debug
@@ -368,6 +374,6 @@ endif (${PROJECT_NAME_PREFIX}DOC)
 # TESTS
 if (${PROJECT_NAME_PREFIX}TEST)
 	enable_testing()
-#	add_subdirectory(standalone_test)
-#	add_subdirectory(unit_test)
+	#	add_subdirectory(standalone_test)
+	#	add_subdirectory(unit_test)
 endif (${PROJECT_NAME_PREFIX}TEST)
