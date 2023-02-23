@@ -19,3 +19,11 @@
 			GAL_GUI_THE_WORLD("[NOT-NULL FAILED]: \"" __VA_ARGS__ "\" --> {" GAL_GUI_TO_STRING(pointer) "}"); \
 		}                                                                                                     \
 	} while (false)
+
+#define GAL_GUI_UNREACHABLE(...)                                                  \
+	[]<bool always_false = false>                                                 \
+	{                                                                             \
+		static_assert(always_false, "[UNREACHABLE BRANCH]: \"" __VA_ARGS__ "\""); \
+	}                                                                             \
+	();                                                                           \
+	std::unreachable()

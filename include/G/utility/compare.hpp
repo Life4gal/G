@@ -1,5 +1,6 @@
 #pragma once
 
+#include <G/utility/assert.hpp>
 #include <compare>
 #include <utility>
 
@@ -75,7 +76,7 @@ namespace gal::gui::utility
 				}
 				else
 				{
-					std::unreachable();
+					GAL_GUI_UNREACHABLE("Invalid floating point type!");
 				}
 			}
 			else
@@ -94,7 +95,7 @@ namespace gal::gui::utility
 				}
 				else
 				{
-					std::unreachable();
+					GAL_GUI_UNREACHABLE("Invalid floating point type!");
 				}
 			}
 		}
