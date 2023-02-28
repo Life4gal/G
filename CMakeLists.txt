@@ -63,9 +63,9 @@ project(
 		LANGUAGES CXX
 )
 if (${${PROJECT_NAME_PREFIX}MASTER_PROJECT})
-	message(STATUS "Our project [${PROJECT_NAME}] is the main-project. CMAKE VERSION: ${CMAKE_VERSION}. Compiler ID: ${CMAKE_CXX_COMPILER_ID}. Platform: ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}.")
+	message(STATUS "Our project [${PROJECT_NAME}] is the main-project. CMAKE VERSION: ${CMAKE_VERSION}. Compiler: ${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}. Platform: ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}.")
 else ()
-	message(STATUS "Our project [${PROJECT_NAME}] is the sub-project. CMAKE VERSION: ${CMAKE_VERSION}. Compiler ID: ${CMAKE_CXX_COMPILER_ID}. Platform: ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}.")
+	message(STATUS "Our project [${PROJECT_NAME}] is the sub-project. CMAKE VERSION: ${CMAKE_VERSION}. Compiler: ${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}. Platform: ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}.")
 endif (${${PROJECT_NAME_PREFIX}MASTER_PROJECT})
 message(STATUS "${PROJECT_NAME} VERSION: ${${PROJECT_NAME_PREFIX}VERSION}")
 message(STATUS "${PROJECT_NAME} BUILD TYPE: ${CMAKE_BUILD_TYPE}")
@@ -298,10 +298,14 @@ if (${PROJECT_NAME_PREFIX}PLATFORM_WINDOWS)
 
 	if (NOT EXISTS $ENV{VCToolsInstallDir})
 		message(FATAL_ERROR "Invalid VC Tools installation path!")
+	else ()
+		message(STATUS "Found VC Tools in: [$ENV{VCToolsInstallDir}]")
 	endif (NOT EXISTS $ENV{VCToolsInstallDir})
 
 	if (NOT EXISTS $ENV{VCToolsInstallDir}modules/std.ixx)
-		message(FATAL_ERROR "Cannot find std.ixx! Please check MSVC version!")
+		message(FATAL_ERROR "Cannot find std.ixx! Please check MSVC version(${CMAKE_CXX_COMPILER_VERSION})!")
+	else()
+		message(STATUS "Found module std.ixx in: [$ENV{VCToolsInstallDir}modules\\std.ixx]")
 	endif (NOT EXISTS $ENV{VCToolsInstallDir}modules/std.ixx)
 
 	configure_file(
