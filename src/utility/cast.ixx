@@ -468,7 +468,7 @@ export namespace gal::gui::utility
 
 		if (sizeof(value_type) > bytes.size())
 		{
-			throw std::runtime_error{"bad_cast"};
+			throw std::bad_cast{};
 		}
 
 		GAL_GUI_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
@@ -477,7 +477,7 @@ export namespace gal::gui::utility
 		{
 			if (std::bit_cast<std::uintptr_t>(bytes.data()) % alignof(value_type) != 0)
 			{
-				throw std::runtime_error{"bad_cast"};
+				throw std::bad_cast{};
 			}
 		}
 
@@ -492,7 +492,7 @@ export namespace gal::gui::utility
 
 		if (sizeof(value_type) + offset > bytes.size())
 		{
-			throw std::runtime_error{"bad_cast"};
+			throw std::bad_cast{};
 		}
 
 		GAL_GUI_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
@@ -502,7 +502,7 @@ export namespace gal::gui::utility
 		{
 			if (std::bit_cast<std::uintptr_t>(data) % alignof(value_type) != 0)
 			{
-				throw std::runtime_error{"bad_cast"};
+				throw std::bad_cast{};
 			}
 		}
 
@@ -518,7 +518,7 @@ export namespace gal::gui::utility
 
 		if (sizeof(value_type) * n > bytes.size())
 		{
-			throw std::runtime_error{"bad_cast"};
+			throw std::bad_cast{};
 		}
 		GAL_GUI_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
 
@@ -526,7 +526,7 @@ export namespace gal::gui::utility
 		{
 			if (std::bit_cast<std::uintptr_t>(bytes.data()) % alignof(value_type) != 0)
 			{
-				throw std::runtime_error{"bad_cast"};
+				throw std::bad_cast{};
 			}
 		}
 
@@ -541,7 +541,7 @@ export namespace gal::gui::utility
 
 		if (sizeof(value_type) * n + offset > bytes.size())
 		{
-			throw std::runtime_error{"bad_cast"};
+			throw std::bad_cast{};
 		}
 
 		GAL_GUI_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
@@ -551,7 +551,7 @@ export namespace gal::gui::utility
 		{
 			if (std::bit_cast<std::uintptr_t>(data) % alignof(value_type) != 0)
 			{
-				throw std::runtime_error{"bad_cast"};
+				throw std::bad_cast{};
 			}
 		}
 
