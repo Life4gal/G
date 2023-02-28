@@ -56,7 +56,7 @@ export namespace gal::gui::utility
 		const auto [end, err_code] = std::from_chars(first, last, value, base);
 		if (end != last or err_code != std::errc{})
 		{
-			throw Exception{"Cannot convert string to integer."};
+			throw make_exception("Cannot convert string to integer.");
 		}
 
 		return value;
@@ -102,7 +102,7 @@ export namespace gal::gui::utility
 		const auto [end, err_code] = std::from_chars(first, last, value);
 		if (end != last or err_code != std::errc{})
 		{
-			throw Exception{"Cannot convert string to floating point."};
+			throw make_exception("Cannot convert string to floating point.");
 		}
 
 		return value;
