@@ -1,4 +1,17 @@
-﻿cmake_minimum_required(VERSION 3.20)
+﻿cmake_minimum_required(VERSION 3.25)
+
+set(W-dev OFF)
+if (CMAKE_VERSION VERSION_LESS "3.26")
+	# 3.25
+	set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "3c375311-a3c9-4396-a187-3227ef642046")
+elseif (CMAKE_VERSION VERSION_LESS "3.27")
+	# 3.26
+	set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "2182bf5c-ef0d-489a-91da-49dbc3090d2a")
+else ()
+	message(FATAL_ERROR "See `https://github.com/Kitware/CMake/blob/v${CMAKE_VERSION}/Help/dev/experimental.rst`.")
+endif (CMAKE_VERSION VERSION_LESS "3.26")
+# turn on the dynamic depends for ninja
+set(CMAKE_EXPERIMENTAL_CXX_MODULE_DYNDEP ON)
 
 set(PROJECT_NAME_PREFIX "G_")
 
@@ -14,7 +27,7 @@ set(
 
 set(
 		${PROJECT_NAME_PREFIX}PATCH_VERSION
-		1
+		2
 )
 
 set(${PROJECT_NAME_PREFIX}VERSION ${${PROJECT_NAME_PREFIX}MAJOR_VERSION}.${${PROJECT_NAME_PREFIX}MINOR_VERSION}.${${PROJECT_NAME_PREFIX}PATCH_VERSION})
@@ -185,38 +198,9 @@ else ()
 	set(${PROJECT_NAME_PREFIX}HEADER_ATTRIBUTES)
 endif (${PROJECT_NAME_PREFIX}SYSTEM_HEADERS)
 
-# HEADER FILES
-set(
-		${PROJECT_NAME_PREFIX}HEADER
-
-		# UTILITY
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/macro.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/exception.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/breakpoint.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/assert.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/type_traits.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/compare.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/cast.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/memory.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/endian.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/detail/constexpr_string_base.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/fixed_string.hpp
-		${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/utility/template_string.hpp
-)
-
-# SOURCE FILES
-set(
-		${PROJECT_NAME_PREFIX}SOURCE
-
-		${PROJECT_SOURCE_DIR}/src/dummy.cpp
-)
-
 # LIBRARY
 add_library(
 		${PROJECT_NAME}
-
-		${${PROJECT_NAME_PREFIX}HEADER}
-		${${PROJECT_NAME_PREFIX}SOURCE}
 )
 
 # LIBRARY ALIAS
@@ -283,19 +267,101 @@ target_compile_features(
 		cxx_std_23
 )
 
-# SET INCLUDE DIRECTORY
-target_include_directories(
+set_target_properties(
 		${PROJECT_NAME}
-		${${PROJECT_NAME_PREFIX}HEADER_ATTRIBUTES}
-		PUBLIC
-		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-		$<INSTALL_INTERFACE:${${PROJECT_NAME_PREFIX}INSTALL_HEADERS}/${PROJECT_NAME}-${PROJECT_VERSION}>
+		PROPERTIES
+		CXX_STANDARD_REQUIRED ON
 )
-target_include_directories(
+
+# SET INCLUDE DIRECTORY
+# `module` --> todo
+#target_include_directories(
+#		${PROJECT_NAME}
+#		${${PROJECT_NAME_PREFIX}HEADER_ATTRIBUTES}
+#		PUBLIC
+#		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+#		$<INSTALL_INTERFACE:${${PROJECT_NAME_PREFIX}INSTALL_HEADERS}/${PROJECT_NAME}-${PROJECT_VERSION}>
+#)
+#target_include_directories(
+#		${PROJECT_NAME}
+#		SYSTEM
+#		PRIVATE
+#		$<BUILD_INTERFACE:${${PROJECT_NAME_PREFIX}TEMP_HEADER_PATH}>
+#)
+
+# `module` --> todo: std module
+set(${PROJECT_NAME_PREFIX}TEMP_CXX_MODULE_PATH ${CMAKE_BINARY_DIR}/temp_module)
+if (${PROJECT_NAME_PREFIX}PLATFORM_WINDOWS)
+	if (NOT DEFINED ENV{VCToolsInstallDir})
+		message(FATAL_ERROR "Unable to find path to VC Tools in environment variables!")
+	endif (NOT DEFINED ENV{VCToolsInstallDir})
+
+	if (NOT EXISTS $ENV{VCToolsInstallDir})
+		message(FATAL_ERROR "Invalid VC Tools installation path!")
+	endif (NOT EXISTS $ENV{VCToolsInstallDir})
+
+	if (NOT EXISTS $ENV{VCToolsInstallDir}modules/std.ixx)
+		message(FATAL_ERROR "Cannot find std.ixx! Please check MSVC version!")
+	endif (NOT EXISTS $ENV{VCToolsInstallDir}modules/std.ixx)
+
+	configure_file(
+			$ENV{VCToolsInstallDir}modules/std.ixx
+			${${PROJECT_NAME_PREFIX}TEMP_CXX_MODULE_PATH}/std.ixx
+			COPYONLY
+	)
+
+	# todo: std.ixx warnings
+	target_compile_options(
+			${PROJECT_NAME}
+			PRIVATE
+			/Wv:18
+	)
+elseif (${PROJECT_NAME_PREFIX}PLATFORM_LINUX)
+	# todo
+elseif (${PROJECT_NAME_PREFIX}PLATFORM_MACOS)
+	# todo
+else ()
+	message(FATAL_ERROR "Unsupported compilers: ${CMAKE_CXX_COMPILER}")
+endif (${PROJECT_NAME_PREFIX}PLATFORM_WINDOWS)
+
+# MODULE SOURCE
+target_sources(
 		${PROJECT_NAME}
-		SYSTEM
 		PRIVATE
-		$<BUILD_INTERFACE:${${PROJECT_NAME_PREFIX}TEMP_HEADER_PATH}>
+		FILE_SET module_files
+		TYPE CXX_MODULES
+		BASE_DIRS "${PROJECT_SOURCE_DIR}"
+		FILES
+
+		${${PROJECT_NAME_PREFIX}TEMP_CXX_MODULE_PATH}/std.ixx
+
+		# ============================
+		# UTILITY
+		# ============================
+		${PROJECT_SOURCE_DIR}/src/utility/exception.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/breakpoint.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/type_traits.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/compare.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/cast.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/memory.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/endian.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/constexpr_string_base.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/fixed_string.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/template_string.ixx
+
+		${PROJECT_SOURCE_DIR}/src/utility/utility.ixx
+)
+
+# HEADER FILES
+target_sources(
+		${PROJECT_NAME}
+		PUBLIC
+		FILE_SET header_files
+		TYPE HEADERS
+		BASE_DIRS "${PROJECT_SOURCE_DIR}/src"
+		FILES
+
+		${PROJECT_SOURCE_DIR}/src/macro.hpp
 )
 
 # LINK 3rd-PARTY LIBRARIES
@@ -308,12 +374,12 @@ set(${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES "")
 #include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/freetype/freetype.cmake)
 #include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/fontconfig/fontconfig.cmake)
 
-message(STATUS "=======================================")
-message(STATUS "[${PROJECT_NAME}] DEPENDENCIES:")
-foreach (DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
-	message(STATUS "-->\t\t ${DEPENDENCY}")
-endforeach (DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
-message(STATUS "=======================================")
+#message(STATUS "=======================================")
+#message(STATUS "[${PROJECT_NAME}] DEPENDENCIES:")
+#foreach (DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
+#	message(STATUS "-->\t\t ${DEPENDENCY}")
+#endforeach (DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
+#message(STATUS "=======================================")
 
 # SET DEBUG POSTFIX ==> lib${PROJECT_NAME} -> Release lib${PROJECT}d -> Debug
 set(${PROJECT_NAME_PREFIX}DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
@@ -325,46 +391,47 @@ set_target_properties(
 		PUBLIC_HEADER "${${PROJECT_NAME_PREFIX}HEADER}"
 		DEBUG_POSTFIX "${${PROJECT_NAME_PREFIX}DEBUG_POSTFIX}")
 
+# `module` --> todo
 # INSTALL TARGETS
-if (${PROJECT_NAME_PREFIX}INSTALL)
-	# PackageProject.cmake will be used to make our target installable
-	CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.10.0")
-
-	# the location where the project's version header will be placed should match the project's regular
-	# header paths
-	string(TOLOWER ${PROJECT_NAME}/version.h VERSION_HEADER_LOCATION)
-
-	packageProject(
-			# the name of the target to export
-			NAME ${PROJECT_NAME}
-			# the version of the target to export
-			VERSION ${PROJECT_VERSION}
-			# (optional) install your library with a namespace (Note: do NOT add extra '::')
-			NAMESPACE ${PROJECT_NAME}
-			# a temporary directory to create the config files
-			BINARY_DIR ${PROJECT_BINARY_DIR}
-			# location of the target's public headers
-			# see target_include_directories -> BUILD_INTERFACE
-			INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
-			# should match the target's INSTALL_INTERFACE include directory
-			# see target_include_directories -> INSTALL_INTERFACE
-			INCLUDE_DESTINATION ${${PROJECT_NAME_PREFIX}INSTALL_HEADERS}/${PROJECT_NAME}-${PROJECT_VERSION}
-			# (optional) create a header containing the version info
-			# Note: that the path to headers should be lowercase
-			VERSION_HEADER "${VERSION_HEADER_LOCATION}"
-			# (optional) define the project's version compatibility, defaults to `AnyNewerVersion`
-			# supported values: `AnyNewerVersion|SameMajorVersion|SameMinorVersion|ExactVersion`
-			COMPATIBILITY AnyNewerVersion
-			# semicolon separated list of the project's dependencies
-			# see `LINK 3rd-PARTY LIBRARIES`
-			DEPENDENCIES ${${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES}
-			# (optional) option to disable the versioning of install destinations
-			DISABLE_VERSION_SUFFIX YES
-			# (optional) option to ignore target architecture for package resolution
-			# defaults to YES for header only (i.e. INTERFACE) libraries
-			ARCH_INDEPENDENT YES
-	)
-endif (${PROJECT_NAME_PREFIX}INSTALL)
+#if (${PROJECT_NAME_PREFIX}INSTALL)
+#	# PackageProject.cmake will be used to make our target installable
+#	CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.10.0")
+#
+#	# the location where the project's version header will be placed should match the project's regular
+#	# header paths
+#	string(TOLOWER ${PROJECT_NAME}/version.h VERSION_HEADER_LOCATION)
+#
+#	packageProject(
+#			# the name of the target to export
+#			NAME ${PROJECT_NAME}
+#			# the version of the target to export
+#			VERSION ${PROJECT_VERSION}
+#			# (optional) install your library with a namespace (Note: do NOT add extra '::')
+#			NAMESPACE ${PROJECT_NAME}
+#			# a temporary directory to create the config files
+#			BINARY_DIR ${PROJECT_BINARY_DIR}
+#			# location of the target's public headers
+#			# see target_include_directories -> BUILD_INTERFACE
+#			INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
+#			# should match the target's INSTALL_INTERFACE include directory
+#			# see target_include_directories -> INSTALL_INTERFACE
+#			INCLUDE_DESTINATION ${${PROJECT_NAME_PREFIX}INSTALL_HEADERS}/${PROJECT_NAME}-${PROJECT_VERSION}
+#			# (optional) create a header containing the version info
+#			# Note: that the path to headers should be lowercase
+#			VERSION_HEADER "${VERSION_HEADER_LOCATION}"
+#			# (optional) define the project's version compatibility, defaults to `AnyNewerVersion`
+#			# supported values: `AnyNewerVersion|SameMajorVersion|SameMinorVersion|ExactVersion`
+#			COMPATIBILITY AnyNewerVersion
+#			# semicolon separated list of the project's dependencies
+#			# see `LINK 3rd-PARTY LIBRARIES`
+#			DEPENDENCIES ${${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES}
+#			# (optional) option to disable the versioning of install destinations
+#			DISABLE_VERSION_SUFFIX YES
+#			# (optional) option to ignore target architecture for package resolution
+#			# defaults to YES for header only (i.e. INTERFACE) libraries
+#			ARCH_INDEPENDENT YES
+#	)
+#endif (${PROJECT_NAME_PREFIX}INSTALL)
 
 # DOCUMENTS
 if (${PROJECT_NAME_PREFIX}DOC)
@@ -374,6 +441,6 @@ endif (${PROJECT_NAME_PREFIX}DOC)
 # TESTS
 if (${PROJECT_NAME_PREFIX}TEST)
 	enable_testing()
-	#	add_subdirectory(standalone_test)
+	add_subdirectory(standalone_test)
 	#	add_subdirectory(unit_test)
 endif (${PROJECT_NAME_PREFIX}TEST)
