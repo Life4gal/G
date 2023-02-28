@@ -11,3 +11,4 @@ export import :memory;
 export import :endian;
 export import :constexpr_string.fixed_string;
 export import :constexpr_string.template_string;
+export import :charconv;

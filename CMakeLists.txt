@@ -352,6 +352,7 @@ target_sources(
 		${PROJECT_SOURCE_DIR}/src/utility/constexpr_string_base.ixx
 		${PROJECT_SOURCE_DIR}/src/utility/fixed_string.ixx
 		${PROJECT_SOURCE_DIR}/src/utility/template_string.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/charconv.ixx
 
 		${PROJECT_SOURCE_DIR}/src/utility/utility.ixx
 )

@@ -18,4 +18,23 @@ auto main() -> int
 		using format_type_2 = GAL_GUI_TEMPLATE_STRING_TYPE("{:<10} == {:>10}");
 		GAL_GUI_ASSUME(std::format(format_type_2::value, "hello", "world") == "hello      ==      world");
 	}
+
+	{
+		using namespace gal::gui::utility;
+
+		constexpr std::string_view pi_string{"3.1415926"};
+		const auto				   pi_double		   = from_string<double>(pi_string);
+		const auto				   pi_double_to_string = to_string(pi_double);
+
+		std::cout << std::format("{} --> {:g} --> {}\n", pi_string, pi_double, pi_double_to_string);
+
+		try
+		{
+			const auto e = from_string<double>("abc");
+		}
+		catch (const Exception& e)
+		{
+			std::cout << e.what() << '\n';
+		}
+	}
 }
