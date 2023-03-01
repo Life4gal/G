@@ -2,12 +2,6 @@ module;
 
 #include <macro.hpp>
 
-// for CHAR_BIT
-// note: DO NOT USE `<climits>` !!!
-// clang-tidy off
-#include <limits.h>// NOLINT
-// clang-tidy on
-
 export module gal.utility:cast;
 
 import std;
@@ -304,7 +298,7 @@ export namespace gal::gui::utility
 		requires(sizeof(Out) * 2 == sizeof(In))// Return value of high_bit_cast must be half the size of the input
 	[[nodiscard]] constexpr auto high_bit_cast(const In input) noexcept -> Out
 	{
-		return static_cast<Out>(input >> sizeof(Out) * CHAR_BIT);
+		return static_cast<Out>(input >> sizeof(Out) * std::numeric_limits<unsigned char>::digits);
 	}
 
 	/**
@@ -315,7 +309,7 @@ export namespace gal::gui::utility
 	[[nodiscard]] constexpr auto merge_bit_cast(const In high, const In low) noexcept -> Out
 	{
 		auto result = static_cast<Out>(high);
-		result <<= sizeof(In) * CHAR_BIT;
+		result <<= sizeof(In) * std::numeric_limits<unsigned char>::digits;
 		result |= static_cast<Out>(low);
 		return result;
 	}
