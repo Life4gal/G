@@ -411,7 +411,7 @@ export namespace gal::gui::utility
 	 * @brief Cast between integral types truncating or zero-extending the result.
 	 */
 	template<integral Out, integral In>
-	[[nodiscard]] constexpr auto trancate(const In input) noexcept -> Out
+	[[nodiscard]] constexpr auto truncate(const In input) noexcept -> Out
 	{
 		return static_cast<Out>(to_unsigned(input));
 	}
