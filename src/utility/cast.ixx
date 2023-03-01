@@ -558,4 +558,10 @@ export namespace gal::gui::utility
 		offset += sizeof(value_type) * n;
 		return std::span<keep_cv_t<Out, In>>{reinterpret_cast<value_type*>(bytes.data()), n};
 	}
+
+	constexpr auto operator""_uz(const std::size_t value) noexcept -> std::size_t
+	{
+		// Hello MSVC?
+		return value;
+	}
 }// namespace gal::gui::utility

@@ -7,6 +7,7 @@ export module gal.utility:hash;
 import std;
 import :exception;
 import :breakpoint;
+import :cast;
 
 export namespace gal::gui::utility
 {
@@ -14,11 +15,11 @@ export namespace gal::gui::utility
 	{
 		if constexpr (sizeof(std::size_t) == 4)// NOLINT
 		{
-			return hash1 + 0x9e3779b9uz + (hash2 << 6) + (hash2 >> 2);
+			return hash1 + 0x9e3779b9_uz + (hash2 << 6) + (hash2 >> 2);
 		}
 		else if constexpr (sizeof(std::size_t) == 8)// NOLINT
 		{
-			return hash1 + 0x9e3779b97f681800uz + (hash2 << 6) + (hash2 >> 2);
+			return hash1 + 0x9e3779b97f681800_uz + (hash2 << 6) + (hash2 >> 2);
 		}
 		else
 		{
