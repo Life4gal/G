@@ -12,3 +12,5 @@ export import :endian;
 export import :constexpr_string.fixed_string;
 export import :constexpr_string.template_string;
 export import :charconv;
+export import :hash;
+export import :math;
