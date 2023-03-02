@@ -45,6 +45,8 @@
 	();                                                                           \
 	std::unreachable()
 
+#define GAL_GUI_NOT_IMPLEMENTED(...) [[unlikely]] GAL_GUI_THE_WORLD("[NOT IMPLEMENTED]: \"" __VA_ARGS__ "\"");
+
 #define GAL_GUI_PRIVATE_DO_GENERATE_TEMPLATE_STRING(string_type, string, string_length, begin_index) \
 	decltype([]<std::size_t... Index>(std::index_sequence<Index...>) constexpr noexcept              \
 			 { return ::gal::gui::utility::string_type<                                              \
