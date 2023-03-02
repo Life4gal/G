@@ -1,6 +1,5 @@
 ﻿cmake_minimum_required(VERSION 3.25)
 
-set(W-dev OFF)
 if (CMAKE_VERSION VERSION_LESS "3.26")
 	# 3.25
 	set(CMAKE_EXPERIMENTAL_CXX_MODULE_CMAKE_API "3c375311-a3c9-4396-a187-3227ef642046")
@@ -27,7 +26,7 @@ set(
 
 set(
 		${PROJECT_NAME_PREFIX}PATCH_VERSION
-		2
+		4
 )
 
 set(${PROJECT_NAME_PREFIX}VERSION ${${PROJECT_NAME_PREFIX}MAJOR_VERSION}.${${PROJECT_NAME_PREFIX}MINOR_VERSION}.${${PROJECT_NAME_PREFIX}PATCH_VERSION})
@@ -258,7 +257,7 @@ if (BUILD_SHARED_LIBS)
 			PRIVATE ${PROJECT_NAME_PREFIX}EXPORT
 			INTERFACE ${PROJECT_NAME_PREFIX}SHARED
 	)
-endif ()
+endif (BUILD_SHARED_LIBS)
 
 # SET FEATURES
 target_compile_features(
@@ -353,8 +352,27 @@ target_sources(
 		${PROJECT_SOURCE_DIR}/src/utility/fixed_string.ixx
 		${PROJECT_SOURCE_DIR}/src/utility/template_string.ixx
 		${PROJECT_SOURCE_DIR}/src/utility/charconv.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/hash.ixx
+		${PROJECT_SOURCE_DIR}/src/utility/math.ixx
 
 		${PROJECT_SOURCE_DIR}/src/utility/utility.ixx
+
+		# ============================
+		# MEMORY
+		# ============================
+		${PROJECT_SOURCE_DIR}/src/memory/memory.ixx
+
+		# ============================
+		# SIMD
+		# ============================
+		${PROJECT_SOURCE_DIR}/src/simd/simd.ixx
+
+		# ============================
+		# IMAGE
+		# ============================
+		${PROJECT_SOURCE_DIR}/src/image/pixmap.ixx
+
+		${PROJECT_SOURCE_DIR}/src/image/image.ixx
 )
 
 # HEADER FILES
@@ -371,20 +389,15 @@ target_sources(
 
 # LINK 3rd-PARTY LIBRARIES
 set(${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES "")
-#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/fmtlib/fmt.cmake)
-#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/spdlog/spdlog.cmake)
-#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/openssl/openssl.cmake)
-#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/curl/curl.cmake)
-#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/stb/image.cmake)
-#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/freetype/freetype.cmake)
-#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/fontconfig/fontconfig.cmake)
+include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/eve/eve.cmake)
+include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/bdwgc/bdwgc.cmake)
 
-#message(STATUS "=======================================")
-#message(STATUS "[${PROJECT_NAME}] DEPENDENCIES:")
-#foreach (DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
-#	message(STATUS "-->\t\t ${DEPENDENCY}")
-#endforeach (DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
-#message(STATUS "=======================================")
+message(STATUS "=======================================")
+message(STATUS "[${PROJECT_NAME}] DEPENDENCIES:")
+foreach (DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
+	message(STATUS "-->\t\t ${DEPENDENCY}")
+endforeach (DEPENDENCY IN LISTS ${PROJECT_NAME_PREFIX}3RD_PARTY_DEPENDENCIES)
+message(STATUS "=======================================")
 
 # SET DEBUG POSTFIX ==> lib${PROJECT_NAME} -> Release lib${PROJECT}d -> Debug
 set(${PROJECT_NAME_PREFIX}DEBUG_POSTFIX d CACHE STRING "Debug library postfix.")
