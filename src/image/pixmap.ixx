@@ -8,16 +8,6 @@ import std;
 import gal.utility;
 import gal.memory;
 
-#if defined(G_COMPILER_MSVC)
-	#define ARR_SUBSCRIPT_OPERATOR_WORKAROUND_LEFT operator(
-	#define ARR_SUBSCRIPT_OPERATOR_WORKAROUND_RIGHT )
-#else
-	#define ARR_SUBSCRIPT_OPERATOR_WORKAROUND_LEFT operator[
-	#define ARR_SUBSCRIPT_OPERATOR_WORKAROUND_RIGHT ]
-#endif
-
-#define ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR ARR_SUBSCRIPT_OPERATOR_WORKAROUND_LEFT ARR_SUBSCRIPT_OPERATOR_WORKAROUND_RIGHT
-
 export namespace gal::gui::image
 {
 	template<typename T, typename Allocator = memory::AnyAllocator<T>>
@@ -342,14 +332,14 @@ namespace gal::gui::image
 				return {data_ + y * stride_, width_};
 			}
 
-			[[nodiscard]] constexpr auto ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) noexcept -> reference
+			[[nodiscard]] constexpr auto GAL_ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) noexcept -> reference
 			{
 				GAL_ASSUME(x < width_ and y < height_);
 
 				return data_[x + y * stride_];
 			}
 
-			[[nodiscard]] constexpr auto ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) const noexcept -> const_reference
+			[[nodiscard]] constexpr auto GAL_ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) const noexcept -> const_reference
 			{
 				GAL_ASSUME(x < width_ and y < height_);
 
@@ -368,7 +358,7 @@ namespace gal::gui::image
 
 			[[nodiscard]] constexpr auto sub_view(const size_type begin_x, const size_type begin_y, const size_type new_width, const size_type new_height) noexcept -> PixmapView<value_type>
 			{
-				auto* new_data = &this->ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(begin_x, begin_y);
+				auto* new_data = &this->GAL_ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(begin_x, begin_y);
 				return PixmapView<value_type>{
 						new_data,
 						new_width,
@@ -378,7 +368,7 @@ namespace gal::gui::image
 
 			[[nodiscard]] constexpr auto sub_view(const size_type begin_x, const size_type begin_y, const size_type new_width, const size_type new_height) const noexcept -> PixmapView<const value_type>
 			{
-				const auto* new_data = &this->ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(begin_x, begin_y);
+				const auto* new_data = &this->GAL_ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(begin_x, begin_y);
 				return PixmapView<const value_type>{
 						new_data,
 						new_width,
@@ -459,13 +449,13 @@ namespace gal::gui::image
 			using const_row_type		 = std::span<const value_type>;
 
 		private:
-			pointer									 data_;
-			size_type								 width_;
-			size_type								 height_;
-			size_type								 capacity_;
-			GAL_NO_UNIQUE_ADDRESS allocator_type allocator_;
+			pointer								 data_;
+			size_type							 width_;
+			size_type							 height_;
+			size_type							 capacity_;
+			GAL_NO_UNIQUE_ADDRESS allocator_type allocator_;// NOLINT
 
-			[[nodiscard]] constexpr auto			 as_phantom() const noexcept -> phantom
+			[[nodiscard]] constexpr auto		 as_phantom() const noexcept -> phantom
 			{
 				return {data_, size()};
 			}
@@ -829,14 +819,14 @@ namespace gal::gui::image
 				return {data_ + y * width_, width_};
 			}
 
-			[[nodiscard]] constexpr auto ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) noexcept -> reference
+			[[nodiscard]] constexpr auto GAL_ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) noexcept -> reference
 			{
 				GAL_ASSUME(x < width_ and y < height_);
 
 				return data_[x + y * width_];
 			}
 
-			[[nodiscard]] constexpr auto ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) const noexcept -> const_reference
+			[[nodiscard]] constexpr auto GAL_ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) const noexcept -> const_reference
 			{
 				GAL_ASSUME(x < width_ and y < height_);
 
@@ -862,7 +852,7 @@ namespace gal::gui::image
 			{
 				GAL_ASSUME(begin_x + new_width <= width_ and begin_y + new_height <= height_);
 
-				const auto* new_data = &this->ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(begin_x, begin_y);
+				const auto* new_data = &this->GAL_ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(begin_x, begin_y);
 				return {
 						new_data,
 						new_width,
