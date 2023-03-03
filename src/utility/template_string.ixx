@@ -154,33 +154,33 @@ namespace gal::gui::utility
 	{
 		using namespace std::string_view_literals;
 
-		static_assert(GAL_GUI_TEMPLATE_STRING_TYPE("hello world")::match("hello world"));
-		static_assert(GAL_GUI_TEMPLATE_STRING_TYPE("hello world")::match("hello world"sv));
-		static_assert(GAL_GUI_TEMPLATE_STRING_TYPE("hello world")::as_string_view() == "hello world");
+		static_assert(GAL_TEMPLATE_STRING_TYPE("hello world")::match("hello world"));
+		static_assert(GAL_TEMPLATE_STRING_TYPE("hello world")::match("hello world"sv));
+		static_assert(GAL_TEMPLATE_STRING_TYPE("hello world")::as_string_view() == "hello world");
 
-		static_assert(GAL_GUI_TEMPLATE_WSTRING_TYPE("hello world")::match(L"hello world"));
-		static_assert(GAL_GUI_TEMPLATE_WSTRING_TYPE("hello world")::match(L"hello world"sv));
-		static_assert(GAL_GUI_TEMPLATE_WSTRING_TYPE("hello world")::as_string_view() == L"hello world");
+		static_assert(GAL_TEMPLATE_WSTRING_TYPE("hello world")::match(L"hello world"));
+		static_assert(GAL_TEMPLATE_WSTRING_TYPE("hello world")::match(L"hello world"sv));
+		static_assert(GAL_TEMPLATE_WSTRING_TYPE("hello world")::as_string_view() == L"hello world");
 
-		static_assert(GAL_GUI_TEMPLATE_U8STRING_TYPE("hello world")::match(u8"hello world"));
-		static_assert(GAL_GUI_TEMPLATE_U8STRING_TYPE("hello world")::match(u8"hello world"sv));
-		static_assert(GAL_GUI_TEMPLATE_U8STRING_TYPE("hello world")::as_string_view() == u8"hello world");
+		static_assert(GAL_TEMPLATE_U8STRING_TYPE("hello world")::match(u8"hello world"));
+		static_assert(GAL_TEMPLATE_U8STRING_TYPE("hello world")::match(u8"hello world"sv));
+		static_assert(GAL_TEMPLATE_U8STRING_TYPE("hello world")::as_string_view() == u8"hello world");
 
-		static_assert(GAL_GUI_TEMPLATE_U16STRING_TYPE("hello world")::match(u"hello world"));
-		static_assert(GAL_GUI_TEMPLATE_U16STRING_TYPE("hello world")::match(u"hello world"sv));
-		static_assert(GAL_GUI_TEMPLATE_U16STRING_TYPE("hello world")::as_string_view() == u"hello world");
+		static_assert(GAL_TEMPLATE_U16STRING_TYPE("hello world")::match(u"hello world"));
+		static_assert(GAL_TEMPLATE_U16STRING_TYPE("hello world")::match(u"hello world"sv));
+		static_assert(GAL_TEMPLATE_U16STRING_TYPE("hello world")::as_string_view() == u"hello world");
 
-		static_assert(GAL_GUI_TEMPLATE_U32STRING_TYPE("hello world")::match(U"hello world"));
-		static_assert(GAL_GUI_TEMPLATE_U32STRING_TYPE("hello world")::match(U"hello world"sv));
-		static_assert(GAL_GUI_TEMPLATE_U32STRING_TYPE("hello world")::as_string_view() == U"hello world");
+		static_assert(GAL_TEMPLATE_U32STRING_TYPE("hello world")::match(U"hello world"));
+		static_assert(GAL_TEMPLATE_U32STRING_TYPE("hello world")::match(U"hello world"sv));
+		static_assert(GAL_TEMPLATE_U32STRING_TYPE("hello world")::as_string_view() == U"hello world");
 
-		using bilateral_hello_world_type = GAL_GUI_BILATERAL_TEMPLATE_STRING_TYPE("hello", "world");
+		using bilateral_hello_world_type = GAL_TEMPLATE_BILATERAL_STRING_TYPE("hello", "world");
 		static_assert(bilateral_hello_world_type::match_left("hello"));
 		static_assert(bilateral_hello_world_type::match_left("hello"sv));
 		static_assert(bilateral_hello_world_type::match_right("world"));
 		static_assert(bilateral_hello_world_type::match_right("world"sv));
 
-		using symmetry_hello_world_type = GAL_GUI_SYMMETRY_TEMPLATE_STRING_TYPE(
+		using symmetry_hello_world_type = GAL_TEMPLATE_SYMMETRY_STRING_TYPE(
 				"({[{("
 				")}]})");
 		static_assert(symmetry_hello_world_type::match_left("({[{("));
@@ -188,7 +188,7 @@ namespace gal::gui::utility
 		static_assert(symmetry_hello_world_type::match_right(")}]})"));
 		static_assert(symmetry_hello_world_type::match_right(")}]})"sv));
 
-		using multiple_hello_world_type = GAL_GUI_MULTIPLE_TEMPLATE_STRING_TYPE_8("h", "e", "l", "l", "o", " ", "world", "!");
+		using multiple_hello_world_type = GAL_TEMPLATE_MULTIPLE_STRING_TYPE_8("h", "e", "l", "l", "o", " ", "world", "!");
 		static_assert(multiple_hello_world_type::match<0>("h"));
 		static_assert(multiple_hello_world_type::match<0>("h"sv));
 		static_assert(multiple_hello_world_type::match<1>("e"));

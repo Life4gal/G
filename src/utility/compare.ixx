@@ -78,7 +78,7 @@ export namespace gal::gui::utility
 				}
 				else
 				{
-					GAL_GUI_UNREACHABLE("Invalid floating point type!");
+					GAL_UNREACHABLE("Invalid floating point type!");
 				}
 			}
 			else
@@ -97,7 +97,7 @@ export namespace gal::gui::utility
 				}
 				else
 				{
-					GAL_GUI_UNREACHABLE("Invalid floating point type!");
+					GAL_UNREACHABLE("Invalid floating point type!");
 				}
 			}
 		}

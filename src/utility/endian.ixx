@@ -74,7 +74,7 @@ export namespace gal::gui::utility
 	template<arithmetic T, std::endian Endian = std::endian::native>
 	[[nodiscard]] constexpr auto byte_load(const T* source) noexcept -> T
 	{
-		GAL_GUI_NOT_NULL(source, "Cannot byte_load from null!");
+		GAL_NOT_NULL(source, "Cannot byte_load from null!");
 
 		auto result = *source;
 		if constexpr (std::endian::native != Endian)
@@ -87,7 +87,7 @@ export namespace gal::gui::utility
 	template<arithmetic T, std::endian Endian = std::endian::native, byte_like In>
 	[[nodiscard]] constexpr auto byte_load(const In* source) noexcept -> T
 	{
-		GAL_GUI_NOT_NULL(source, "Cannot byte_load from null!");
+		GAL_NOT_NULL(source, "Cannot byte_load from null!");
 
 		auto result = unaligned_load<T>(source);
 		if constexpr (std::endian::native != Endian)
@@ -100,7 +100,7 @@ export namespace gal::gui::utility
 	template<arithmetic T, std::endian Endian = std::endian::native>
 	[[nodiscard]] constexpr auto byte_load(const void* source) noexcept -> T
 	{
-		GAL_GUI_NOT_NULL(source, "Cannot byte_load from null!");
+		GAL_NOT_NULL(source, "Cannot byte_load from null!");
 
 		auto result = unaligned_load<T>(source);
 		if constexpr (std::endian::native != Endian)
@@ -149,7 +149,7 @@ export namespace gal::gui::utility
 	template<arithmetic T, std::endian Endian = std::endian::native>
 	constexpr auto byte_store(const T value, T* dest) noexcept -> void
 	{
-		GAL_GUI_NOT_NULL(dest, "Cannot byte_store to null!");
+		GAL_NOT_NULL(dest, "Cannot byte_store to null!");
 
 		auto result = value;
 		if constexpr (std::endian::native != Endian)
@@ -162,7 +162,7 @@ export namespace gal::gui::utility
 	template<arithmetic T, std::endian Endian = std::endian::native, byte_like In>
 	constexpr auto byte_store(const T value, const In* dest) noexcept -> void
 	{
-		GAL_GUI_NOT_NULL(dest, "Cannot byte_store to null!");
+		GAL_NOT_NULL(dest, "Cannot byte_store to null!");
 
 		auto result = value;
 		if constexpr (std::endian::native != Endian)
@@ -175,7 +175,7 @@ export namespace gal::gui::utility
 	template<arithmetic T, std::endian Endian = std::endian::native>
 	constexpr auto byte_store(const T value, const void* dest) noexcept -> void
 	{
-		GAL_GUI_NOT_NULL(dest, "Cannot byte_store to null!");
+		GAL_NOT_NULL(dest, "Cannot byte_store to null!");
 
 		auto result = value;
 		if constexpr (std::endian::native != Endian)

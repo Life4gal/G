@@ -330,28 +330,28 @@ namespace gal::gui::image
 
 			[[nodiscard]] constexpr auto operator[](const size_type y) noexcept -> row_type
 			{
-				GAL_GUI_ASSUME(y < height_);
+				GAL_ASSUME(y < height_);
 
 				return {data_ + y * stride_, width_};
 			}
 
 			[[nodiscard]] constexpr auto operator[](const size_type y) const noexcept -> const_row_type
 			{
-				GAL_GUI_ASSUME(y < height_);
+				GAL_ASSUME(y < height_);
 
 				return {data_ + y * stride_, width_};
 			}
 
 			[[nodiscard]] constexpr auto ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) noexcept -> reference
 			{
-				GAL_GUI_ASSUME(x < width_ and y < height_);
+				GAL_ASSUME(x < width_ and y < height_);
 
 				return data_[x + y * stride_];
 			}
 
 			[[nodiscard]] constexpr auto ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) const noexcept -> const_reference
 			{
-				GAL_GUI_ASSUME(x < width_ and y < height_);
+				GAL_ASSUME(x < width_ and y < height_);
 
 				return data_[x + y * stride_];
 			}
@@ -388,8 +388,8 @@ namespace gal::gui::image
 
 			friend constexpr auto copy(PixmapView source, PixmapView<std::remove_const_t<value_type>> dest) noexcept -> void// NOLINT
 			{
-				GAL_GUI_ASSUME(source.width() == dest.width(), "Width mismatch!");
-				GAL_GUI_ASSUME(source.height() == dest.height(), "Height mismatch!");
+				GAL_ASSUME(source.width() == dest.width(), "Width mismatch!");
+				GAL_ASSUME(source.height() == dest.height(), "Height mismatch!");
 
 				if (source.stride() == source.width() and source.stride() == dest.stride())
 				{
@@ -463,7 +463,7 @@ namespace gal::gui::image
 			size_type								 width_;
 			size_type								 height_;
 			size_type								 capacity_;
-			GAL_GUI_NO_UNIQUE_ADDRESS allocator_type allocator_;
+			GAL_NO_UNIQUE_ADDRESS allocator_type allocator_;
 
 			[[nodiscard]] constexpr auto			 as_phantom() const noexcept -> phantom
 			{
@@ -660,7 +660,7 @@ namespace gal::gui::image
 				  capacity_{width_ * height_},
 				  allocator_{allocator}
 			{
-				GAL_GUI_NOT_NULL(source);
+				GAL_NOT_NULL(source);
 
 				if (width_ == stride)
 				{
@@ -817,28 +817,28 @@ namespace gal::gui::image
 
 			[[nodiscard]] constexpr auto operator[](const size_type y) noexcept -> row_type
 			{
-				GAL_GUI_ASSUME(y < height_);
+				GAL_ASSUME(y < height_);
 
 				return {data_ + y * width_, width_};
 			}
 
 			[[nodiscard]] constexpr auto operator[](const size_type y) const noexcept -> const_row_type
 			{
-				GAL_GUI_ASSUME(y < height_);
+				GAL_ASSUME(y < height_);
 
 				return {data_ + y * width_, width_};
 			}
 
 			[[nodiscard]] constexpr auto ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) noexcept -> reference
 			{
-				GAL_GUI_ASSUME(x < width_ and y < height_);
+				GAL_ASSUME(x < width_ and y < height_);
 
 				return data_[x + y * width_];
 			}
 
 			[[nodiscard]] constexpr auto ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(const size_type x, const size_type y) const noexcept -> const_reference
 			{
-				GAL_GUI_ASSUME(x < width_ and y < height_);
+				GAL_ASSUME(x < width_ and y < height_);
 
 				return data_[x + y * width_];
 			}
@@ -860,7 +860,7 @@ namespace gal::gui::image
 
 			[[nodiscard]] constexpr auto sub_pixmap(const size_type begin_x, const size_type begin_y, const size_type new_width, const size_type new_height, allocator_type allocator) noexcept(false) -> Pixmap
 			{
-				GAL_GUI_ASSUME(begin_x + new_width <= width_ and begin_y + new_height <= height_);
+				GAL_ASSUME(begin_x + new_width <= width_ and begin_y + new_height <= height_);
 
 				const auto* new_data = &this->ARR_SUBSCRIPT_OPERATOR_WORKAROUND_OPERATOR(begin_x, begin_y);
 				return {

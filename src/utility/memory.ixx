@@ -46,7 +46,7 @@ namespace gal::gui::utility
 		template<arithmetic T, byte_like In>
 		[[nodiscard]] constexpr auto unaligned_load(const In* source) noexcept -> T
 		{
-			GAL_GUI_NOT_NULL(source, "Cannot unaligned_load from null!");
+			GAL_NOT_NULL(source, "Cannot unaligned_load from null!");
 
 			T result{};
 
@@ -98,7 +98,7 @@ namespace gal::gui::utility
 		template<arithmetic T, byte_like In>
 		constexpr auto unaligned_store(const T value, In* dest) noexcept -> void
 		{
-			GAL_GUI_NOT_NULL(dest, "Cannot unaligned_store from null!");
+			GAL_NOT_NULL(dest, "Cannot unaligned_store from null!");
 
 			using unsigned_type		  = std::make_unsigned_t<T>;
 
@@ -148,7 +148,7 @@ namespace gal::gui::utility
 		template<typename T>
 		[[nodiscard]] constexpr auto byte_advance(T * pointer, const std::ptrdiff_t distance) noexcept -> T*
 		{
-			GAL_GUI_NOT_NULL(pointer);
+			GAL_NOT_NULL(pointer);
 			return reinterpret_cast<T*>(reinterpret_cast<char*>(pointer) + distance);
 		}
 
@@ -162,7 +162,7 @@ namespace gal::gui::utility
 		template<typename T>
 		[[nodiscard]] constexpr auto byte_advance(const T* pointer, const std::ptrdiff_t distance) noexcept -> const T*
 		{
-			GAL_GUI_NOT_NULL(pointer);
+			GAL_NOT_NULL(pointer);
 			return reinterpret_cast<const T*>(reinterpret_cast<char*>(pointer) + distance);
 		}
 	}
@@ -183,8 +183,8 @@ namespace gal::gui::utility
 						 std::is_constructible_v<T, typename std::pointer_traits<Pointer>::element_type>;
 					 }
 		{
-			GAL_GUI_NOT_NULL(source_pointer);
-			GAL_GUI_NOT_NULL(dest);
+			GAL_NOT_NULL(source_pointer);
+			GAL_NOT_NULL(dest);
 
 			return std::construct_at(dest, *source_pointer);
 		}
@@ -203,8 +203,8 @@ namespace gal::gui::utility
 						 std::is_constructible_v<T, typename std::iterator_traits<Iterator>::value_type>;
 					 }
 		{
-			GAL_GUI_ASSUME(source_iterator != Iterator{});
-			GAL_GUI_NOT_NULL(dest);
+			GAL_ASSUME(source_iterator != Iterator{});
+			GAL_NOT_NULL(dest);
 
 			return std::construct_at(dest, *source_iterator);
 		}
@@ -226,8 +226,8 @@ namespace gal::gui::utility
 						 std::is_constructible_v<T, typename std::pointer_traits<Pointer>::element_type>;
 					 }
 		{
-			GAL_GUI_NOT_NULL(source_pointer);
-			GAL_GUI_NOT_NULL(dest);
+			GAL_NOT_NULL(source_pointer);
+			GAL_NOT_NULL(dest);
 
 			auto* result = std::construct_at(dest, std::move(*source_pointer));
 			std::destroy_at(std::addressof(*source_pointer));
@@ -251,8 +251,8 @@ namespace gal::gui::utility
 						 std::is_constructible_v<T, typename std::iterator_traits<Iterator>::value_type>;
 					 }
 		{
-			GAL_GUI_ASSUME(source_iterator != Iterator{});
-			GAL_GUI_NOT_NULL(dest);
+			GAL_ASSUME(source_iterator != Iterator{});
+			GAL_NOT_NULL(dest);
 
 			auto* result = std::construct_at(dest, std::move(*source_iterator));
 			std::destroy_at(std::addressof(*source_iterator));
@@ -342,8 +342,8 @@ namespace gal::gui::utility
 						 copy_construct(source_begin, dest_begin);
 					 }
 		{
-			GAL_GUI_ASSUME(source_begin != source_end);
-			GAL_GUI_ASSUME(is_valid_range<PointerOrIterator>{}(source_begin, source_end));
+			GAL_ASSUME(source_begin != source_end);
+			GAL_ASSUME(is_valid_range<PointerOrIterator>{}(source_begin, source_end));
 
 			auto source = source_begin;
 			auto dest	= dest_begin;
@@ -364,8 +364,8 @@ namespace gal::gui::utility
 						 move_construct(source_begin, dest_begin);
 					 }
 		{
-			GAL_GUI_ASSUME(source_begin != source_end);
-			GAL_GUI_ASSUME(is_valid_range<PointerOrIterator>{}(source_begin, source_end));
+			GAL_ASSUME(source_begin != source_end);
+			GAL_ASSUME(is_valid_range<PointerOrIterator>{}(source_begin, source_end));
 
 			auto source = source_begin;
 			auto dest	= dest_begin;
@@ -383,8 +383,8 @@ namespace gal::gui::utility
 		template<typename PointerOrIterator, typename... Args>
 		constexpr auto construct(PointerOrIterator dest_begin, PointerOrIterator dest_end, const Args&... args) noexcept(std::is_nothrow_constructible_v<typename is_valid_range<PointerOrIterator>::type, const Args&...>)->void
 		{
-			GAL_GUI_ASSUME(dest_begin != dest_end);
-			GAL_GUI_ASSUME(is_valid_range<PointerOrIterator>{}(dest_begin, dest_end));
+			GAL_ASSUME(dest_begin != dest_end);
+			GAL_ASSUME(is_valid_range<PointerOrIterator>{}(dest_begin, dest_end));
 
 			for (auto it = dest_begin; it != dest_end; ++it)
 			{

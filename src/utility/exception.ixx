@@ -28,7 +28,7 @@ namespace gal::gui::utility
 		template<typename E = Exception>
 		auto make_exception(const std::string_view message, const std::source_location& location = std::source_location::current())->E
 		{
-			return E{make_what<GAL_GUI_TEMPLATE_STRING_TYPE("{}")>(location, message)};
+			return E{make_what<GAL_TEMPLATE_STRING_TYPE("{}")>(location, message)};
 		}
 
 		template<typename TemplateString, typename E = Exception, typename... Args>

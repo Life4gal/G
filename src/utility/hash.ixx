@@ -23,7 +23,7 @@ export namespace gal::gui::utility
 		}
 		else
 		{
-			GAL_GUI_NOT_IMPLEMENTED("Currently only 32/64 bit hash combinations are implemented");
+			GAL_GUI_IMPLEMENTED("Currently only 32/64 bit hash combinations are implemented");
 		}
 	}
 

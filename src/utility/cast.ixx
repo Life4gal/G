@@ -56,7 +56,7 @@ export namespace gal::gui::utility
 		}
 		else
 		{
-			GAL_GUI_ASSUME(input == nullptr or dynamic_cast<TargetPointer>(input) != nullptr);
+			GAL_ASSUME(input == nullptr or dynamic_cast<TargetPointer>(input) != nullptr);
 			return static_cast<TargetPointer>(input);
 		}
 	}
@@ -117,7 +117,7 @@ export namespace gal::gui::utility
 		}
 		else
 		{
-			GAL_GUI_ASSUME(dynamic_cast<std::add_pointer_t<std::remove_reference_t<TargetReference>>>(std::addressof(input)) != nullptr);
+			GAL_ASSUME(dynamic_cast<std::add_pointer_t<std::remove_reference_t<TargetReference>>>(std::addressof(input)) != nullptr);
 			return static_cast<TargetReference>(input);
 		}
 	}
@@ -206,7 +206,7 @@ export namespace gal::gui::utility
 		else
 		{
 			const auto out = static_cast<Out>(input);
-			GAL_GUI_ASSERT(cast_detail::narrow_validate(out, input), "Invalid narrow cast!");
+			GAL_ASSERT(cast_detail::narrow_validate(out, input), "Invalid narrow cast!");
 			return out;
 		}
 	}
@@ -465,7 +465,7 @@ export namespace gal::gui::utility
 			throw std::bad_cast{};
 		}
 
-		GAL_GUI_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
+		GAL_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
 
 		if constexpr (alignof(value_type) != 1)
 		{
@@ -489,7 +489,7 @@ export namespace gal::gui::utility
 			throw std::bad_cast{};
 		}
 
-		GAL_GUI_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
+		GAL_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
 
 		const auto data = bytes.data() + offset;
 		if constexpr (alignof(value_type) != 1)
@@ -514,7 +514,7 @@ export namespace gal::gui::utility
 		{
 			throw std::bad_cast{};
 		}
-		GAL_GUI_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
+		GAL_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
 
 		if constexpr (alignof(value_type) != 1)
 		{
@@ -538,7 +538,7 @@ export namespace gal::gui::utility
 			throw std::bad_cast{};
 		}
 
-		GAL_GUI_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
+		GAL_NOT_NULL(bytes.data(), "Cannot implicit_cast null data!");
 
 		const auto data = bytes.data() + offset;
 		if constexpr (alignof(value_type) != 1)
