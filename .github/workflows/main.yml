@@ -88,41 +88,41 @@ jobs:
 #        working-directory: build/
 #        run: ctest --output-on-failure
 
-#  windows:
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        toolset: [ CLANG, MSVC ]
-#        build_type: [ Debug, Release ]
-#
-#    runs-on: windows-latest
-#
-#    steps:
-#      - uses: actions/checkout@v3
-#
-#      - name: Install ninja-build tool
-#        uses: seanmiddleditch/gha-setup-ninja@v3
-#
-#      - name: Enable Developer Command Prompt
-#        uses: ilammy/msvc-dev-cmd@v1.12.0
-#
-#      - uses: actions/cache@v3
-#        with:
-#          path: "**/cpm_modules"
-#          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
-#
-#      - name: Create Build Environment
-#        run: cmake -E make_directory out/build/win-x64-${{matrix.build_type}}-${{matrix.toolset}}/
-#
-#      - name: Configure
-#        shell: bash
-#        working-directory: out/build/win-x64-${{matrix.build_type}}-${{matrix.toolset}}/
-#        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${{matrix.build_type}} --preset win-x64-${{matrix.build_type}}-${{matrix.toolset}}
-#
-#      - name: Build
-#        working-directory: out/build/win-x64-${{matrix.build_type}}-${{matrix.toolset}}/
-#        run: cmake --build . --config ${{matrix.build_type}}
-#
-#      - name: Test
-#        working-directory: out/build/win-x64-${{matrix.build_type}}-${{matrix.toolset}}/
-#        run: ctest -C ${{matrix.build_type}} --output-on-failure
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        toolset: [ CLANG, MSVC ]
+        build_type: [ Debug, Release ]
+
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install ninja-build tool
+        uses: seanmiddleditch/gha-setup-ninja@v3
+
+      - name: Enable Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1.12.0
+
+      - uses: actions/cache@v3
+        with:
+          path: "**/cpm_modules"
+          key: ${{ github.workflow }}-cpm-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+
+      - name: Create Build Environment
+        run: cmake -E make_directory out/build/win-x64-${{matrix.build_type}}-${{matrix.toolset}}/
+
+      - name: Configure
+        shell: bash
+        working-directory: out/build/win-x64-${{matrix.build_type}}-${{matrix.toolset}}/
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=${{matrix.build_type}} --preset win-x64-${{matrix.build_type}}-${{matrix.toolset}}
+
+      - name: Build
+        working-directory: out/build/win-x64-${{matrix.build_type}}-${{matrix.toolset}}/
+        run: cmake --build . --config ${{matrix.build_type}}
+
+      - name: Test
+        working-directory: out/build/win-x64-${{matrix.build_type}}-${{matrix.toolset}}/
+        run: ctest -C ${{matrix.build_type}} --output-on-failure
