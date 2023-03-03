@@ -26,7 +26,7 @@ set(
 
 set(
 		${PROJECT_NAME_PREFIX}PATCH_VERSION
-		4
+		5
 )
 
 set(${PROJECT_NAME_PREFIX}VERSION ${${PROJECT_NAME_PREFIX}MAJOR_VERSION}.${${PROJECT_NAME_PREFIX}MINOR_VERSION}.${${PROJECT_NAME_PREFIX}PATCH_VERSION})
@@ -209,6 +209,12 @@ add_library(
 		${PROJECT_NAME}
 )
 
+add_library(
+		gal::${PROJECT_NAME}
+		ALIAS
+		${PROJECT_NAME}
+)
+
 # SET FLAGS
 target_compile_options(
 		${PROJECT_NAME}
@@ -303,7 +309,7 @@ if (${PROJECT_NAME_PREFIX}PLATFORM_WINDOWS)
 
 	if (NOT EXISTS $ENV{VCToolsInstallDir}modules/std.ixx)
 		message(FATAL_ERROR "Cannot find std.ixx! Please check MSVC version(${CMAKE_CXX_COMPILER_VERSION})!")
-	else()
+	else ()
 		message(STATUS "Found module std.ixx in: [$ENV{VCToolsInstallDir}modules\\std.ixx]")
 	endif (NOT EXISTS $ENV{VCToolsInstallDir}modules/std.ixx)
 
@@ -337,6 +343,11 @@ target_sources(
 		FILES
 
 		${${PROJECT_NAME_PREFIX}TEMP_CXX_MODULE_PATH}/std.ixx
+
+		# ============================
+		# TEST
+		# ============================
+		${PROJECT_SOURCE_DIR}/src/test/test.ixx
 
 		# ============================
 		# UTILITY
@@ -460,5 +471,5 @@ endif (${PROJECT_NAME_PREFIX}DOC)
 if (${PROJECT_NAME_PREFIX}TEST)
 	enable_testing()
 	add_subdirectory(standalone_test)
-	#	add_subdirectory(unit_test)
+	add_subdirectory(unit_test)
 endif (${PROJECT_NAME_PREFIX}TEST)
