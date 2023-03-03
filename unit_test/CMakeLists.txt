@@ -1,35 +1,32 @@
 project(
-		CMakeTemplateProject-unit-test
+		G-unit-test
 		LANGUAGES CXX
-)
-
-file(
-		GLOB_RECURSE
-		${PROJECT_NAME}_SOURCE
-		CONFIGURE_DEPENDS
-
-		src/*.cpp
 )
 
 add_executable(
 		${PROJECT_NAME}
 
-		${${PROJECT_NAME}_SOURCE}
+		# =================================
+		# IMAGE
+		# =================================
+		${PROJECT_SOURCE_DIR}/src/image/test_pixmap.cpp
+		${PROJECT_SOURCE_DIR}/src/image/test_pixmap_view.cpp
+
+		${PROJECT_SOURCE_DIR}/src/main.cpp
 )
 
-target_compile_definitions(
-		${PROJECT_NAME}
-		PUBLIC
-
-		BOOST_UT_DISABLE_MODULE
-)
-
-include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/ut/ut.cmake)
+#include(${${PROJECT_NAME_PREFIX}3RD_PARTY_PATH}/ut/ut.cmake)
+#
+#target_compile_definitions(
+#		${PROJECT_NAME}
+#		PUBLIC
+#		BOOST_UT_PATH=${BOOST_UT_PATH}
+#)
 
 target_link_libraries(
 		${PROJECT_NAME}
 		PRIVATE
-		CMakeTemplateProject::CMakeTemplateProject
+		gal::G
 )
 
 add_test(
