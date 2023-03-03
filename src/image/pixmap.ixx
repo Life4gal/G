@@ -11,6 +11,11 @@ import gal.memory;
 export namespace gal::gui::image
 {
 	template<typename T, typename Allocator = memory::AnyAllocator<T>>
+		requires requires {
+					 typename Allocator::value_type;
+					 std::is_same_v<Allocator, typename std::allocator_traits<Allocator>::allocator_type>;
+					 std::is_same_v<decltype(std::declval<Allocator>().allocate(0)), typename std::allocator_traits<Allocator>::pointer>;
+				 }
 	class Pixmap;
 
 	template<typename T>
@@ -240,6 +245,20 @@ namespace gal::gui::image
 			constexpr explicit(false) PixmapView(// NOLINT
 					Pixmap<U, Allocator>&& pixmap) noexcept = delete;
 
+			template<std::same_as<std::remove_const_t<value_type>> U, typename Allocator>
+			constexpr auto operator=(const Pixmap<U, Allocator>& pixmap) noexcept -> PixmapView&
+			{
+				*this = PixmapView{pixmap};
+				return *this;
+			}
+
+			template<std::same_as<std::remove_const_t<value_type>> U, typename Allocator>
+			constexpr auto operator=(Pixmap<U, Allocator>& pixmap) noexcept -> PixmapView&
+			{
+				*this = PixmapView{pixmap};
+				return *this;
+			}
+
 			[[nodiscard]] constexpr explicit(false) operator PixmapView<const value_type>() const noexcept// NOLINT
 				requires(not std::is_const_v<value_type>)
 			{
@@ -410,11 +429,19 @@ namespace gal::gui::image
 			}
 		};
 
-		template<typename T, typename Allocator>
-		PixmapView(Pixmap<T, Allocator> & pixmap) -> PixmapView<T>;
+		template<typename T, typename S>
+			requires std::is_convertible_v<S, typename PixmapView<T>::size_type>
+		PixmapView(
+				T * data,
+				S						width,
+				std::type_identity_t<S> height,
+				std::type_identity_t<S> stride = {}) -> PixmapView<T>;
 
 		template<typename T, typename Allocator>
 		PixmapView(const Pixmap<T, Allocator>& pixmap) -> PixmapView<const T>;
+
+		template<typename T, typename Allocator>
+		PixmapView(Pixmap<T, Allocator> & pixmap) -> PixmapView<T>;
 	}
 
 	export
@@ -425,6 +452,11 @@ namespace gal::gui::image
 		 * @tparam Allocator The allocator to use for allocating the array of pixels.
 		 */
 		template<typename T, typename Allocator>
+			requires requires {
+						 typename Allocator::value_type;
+						 std::is_same_v<Allocator, typename std::allocator_traits<Allocator>::allocator_type>;
+						 std::is_same_v<decltype(std::declval<Allocator>().allocate(0)), typename std::allocator_traits<Allocator>::pointer>;
+					 }
 		class Pixmap
 		{
 			using phantom = phantom<T>;
@@ -508,7 +540,7 @@ namespace gal::gui::image
 				try
 				{
 					new_data = allocator_traits_type::allocate(new_allocator, new_capacity);
-					std::ranges::uninitialized_copy(other, new_data, new_data + new_capacity);
+					std::ranges::uninitialized_copy(other.begin(), other.end(), new_data, new_data + new_capacity);
 				}
 				catch (...)
 				{
@@ -578,7 +610,7 @@ namespace gal::gui::image
 				try
 				{
 					new_data = allocator_traits_type::allocate(allocator_, new_capacity);
-					std::ranges::uninitialized_move(other, new_data, new_data + new_capacity);
+					std::ranges::uninitialized_move(other.begin(), other.end(), new_data, new_data + new_capacity);
 				}
 				catch (...)
 				{
@@ -610,7 +642,9 @@ namespace gal::gui::image
 
 			constexpr ~Pixmap() noexcept
 			{
-				std::ranges::destroy(*this);
+				// todo: span range
+				// std::ranges::destroy(*this);
+				std::ranges::destroy(begin(), end());
 				if (data_)
 				{
 					allocator_traits_type::deallocate(allocator_, data_, capacity_);
@@ -674,7 +708,7 @@ namespace gal::gui::image
 					{
 						while (it_dest != it_dest_end)
 						{
-							std::ranges::uninitialized_copy(it_source, it_source + width, it_dest);
+							std::ranges::uninitialized_copy(it_source, it_source + width, it_dest, it_dest + width);
 							it_source += stride;
 							it_dest += width;
 						}
@@ -700,9 +734,9 @@ namespace gal::gui::image
 
 			template<std::convertible_to<value_type> U>
 			constexpr explicit Pixmap(
-					const PixmapView<const U> other,
-					allocator_type			  allocator = allocator_type{}) noexcept(false)
-				: Pixmap{other.data(), other.width(), other.height(), allocator}
+					const PixmapView<U> other,
+					allocator_type		allocator = allocator_type{}) noexcept(false)
+				: Pixmap{other.data(), other.width(), other.height(), other.stride(), allocator}
 			{
 			}
 
@@ -857,6 +891,7 @@ namespace gal::gui::image
 						new_data,
 						new_width,
 						new_height,
+						width_,
 						allocator};
 			}
 
@@ -911,7 +946,42 @@ namespace gal::gui::image
 			}
 		};
 
+		template<typename T, typename S, typename Allocator = memory::AnyAllocator<std::remove_const_t<T>>>
+			requires std::is_convertible_v<S, typename Pixmap<T, Allocator>::size_type> and std::is_same_v<Allocator, typename Pixmap<T, Allocator>::allocator_type>
+		Pixmap(
+				T * data,
+				S						width,
+				std::type_identity_t<S> height,
+				std::type_identity_t<S> stride,
+				Allocator				allocator = Allocator{}) -> Pixmap<T, Allocator>;
+
+		template<typename T, typename S, typename Allocator = memory::AnyAllocator<std::remove_const_t<T>>>
+			requires std::is_convertible_v<S, typename Pixmap<T, Allocator>::size_type> and std::is_same_v<Allocator, typename Pixmap<T, Allocator>::allocator_type>
+		Pixmap(
+				const T*				data,
+				S						width,
+				std::type_identity_t<S> height,
+				std::type_identity_t<S> stride,
+				Allocator				allocator = Allocator{}) -> Pixmap<T, Allocator>;
+
+		template<typename T, typename S, typename Allocator = memory::AnyAllocator<std::remove_const_t<T>>>
+			requires std::is_convertible_v<S, typename Pixmap<T, Allocator>::size_type> and std::is_same_v<Allocator, typename Pixmap<T, Allocator>::allocator_type>
+		Pixmap(
+				T * data,
+				S						width,
+				std::type_identity_t<S> height,
+				Allocator				allocator = Allocator{}) -> Pixmap<T, Allocator>;
+
+		template<typename T, typename S, typename Allocator = memory::AnyAllocator<std::remove_const_t<T>>>
+			requires std::is_convertible_v<S, typename Pixmap<T, Allocator>::size_type> and std::is_same_v<Allocator, typename Pixmap<T, Allocator>::allocator_type>
+		Pixmap(
+				const T*				data,
+				S						width,
+				std::type_identity_t<S> height,
+				Allocator				allocator = Allocator{}) -> Pixmap<T, Allocator>;
+
 		template<typename T, typename Allocator = memory::AnyAllocator<std::remove_const_t<T>>>
+			requires std::is_same_v<Allocator, typename Pixmap<std::remove_const_t<T>, Allocator>::allocator_type>
 		Pixmap(PixmapView<T> pv, Allocator allocator = Allocator{}) -> Pixmap<std::remove_const_t<T>, Allocator>;
 	}
 }// namespace gal::gui::image
